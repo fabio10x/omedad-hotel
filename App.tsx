@@ -6,6 +6,11 @@ import Home from './pages/Home';
 import Rooms from './pages/Rooms';
 import Dining from './pages/Dining';
 import Location from './pages/Location';
+import Checkout from './pages/Checkout';
+import Admin from './pages/Admin';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -18,7 +23,8 @@ const ScrollToTop = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -28,11 +34,14 @@ const App: React.FC = () => {
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/dining" element={<Dining />} />
             <Route path="/location" element={<Location />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </main>
         <Footer />
       </div>
     </Router>
+    </QueryClientProvider>
   );
 };
 

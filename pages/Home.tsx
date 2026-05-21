@@ -1,12 +1,28 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Star, Wifi, Car, Coffee, MapPin } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { IMAGES, HOTEL_NAME } from '../constants';
+import { supabase } from '../lib/supabase';
 import ScrollReveal from '../components/ScrollReveal';
 import BookingForm from '../components/BookingForm';
 
 const Home: React.FC = () => {
   const location = useLocation();
+
+  const { data: featuredRooms, isLoading: roomsLoading, isError: roomsError } = useQuery({
+    queryKey: ['featured-rooms'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Aura-standard')
+        .select('*')
+        .order('created_at', { ascending: true })
+        .limit(3);
+      if (error) throw error;
+      return data;
+    },
+    retry: false,
+  });
 
   useEffect(() => {
     // Check if we need to scroll to the booking section (passed from Navbar "Book Now")
@@ -32,7 +48,7 @@ const Home: React.FC = () => {
         <div className="absolute inset-0">
           <img 
             src={IMAGES.hero} 
-            alt="Omedad Hotel Exterior" 
+            alt="Aura web service Exterior" 
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/40" />
@@ -70,7 +86,7 @@ const Home: React.FC = () => {
         <ScrollReveal>
           <div className="text-center mb-16">
             <span className="text-gold-600 font-serif italic text-lg">Welcome</span>
-            <h2 className="text-4xl font-serif font-bold text-stone-900 mt-2">A Haven in Kirkos</h2>
+            <h2 className="text-4xl font-serif font-bold text-stone-900 mt-2">A Haven in Bole</h2>
             <div className="w-24 h-1 bg-gold-500 mx-auto mt-6"></div>
           </div>
         </ScrollReveal>
@@ -86,8 +102,8 @@ const Home: React.FC = () => {
             <ScrollReveal delay={200}>
                 <h3 className="text-2xl font-serif font-bold text-stone-800 mb-4">Experience Ethiopian Hospitality</h3>
                 <p className="text-stone-600 leading-relaxed mb-6">
-                    Located in the vibrant neighborhood of Kirkos, {HOTEL_NAME} offers a perfect blend of modern luxury and traditional charm. 
-                    Rated 5.0 stars by our guests, we pride ourselves on exceptional service. Whether you are here for business in Meskel Square or leisure, 
+                    Located in the vibrant Bole district, {HOTEL_NAME} offers a perfect blend of modern luxury and traditional charm. 
+                    Rated 5.0 stars by our guests, we pride ourselves on exceptional service. Whether you are here for business or leisure in Bole, 
                     our prime location makes us the perfect choice.
                 </p>
                 <ul className="space-y-4 mb-8">
@@ -128,26 +144,54 @@ const Home: React.FC = () => {
             </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[0, 1, 5].map((idx, i) => (
-                    <ScrollReveal key={idx} delay={i * 100}>
-                        <div className="group relative overflow-hidden rounded-md h-80 cursor-pointer">
-                            <img 
-                                src={IMAGES.rooms[idx]} 
-                                alt="Room Preview" 
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-90"></div>
-                            <div className="absolute bottom-6 left-6">
-                                <span className="text-gold-400 text-sm font-bold uppercase tracking-wider">
-                                    {i === 2 ? 'Twin Room' : 'Double Room'}
-                                </span>
-                                <h3 className="text-xl font-bold mt-1 group-hover:text-gold-200 transition-colors">
-                                    Starting from ETB 5,500
-                                </h3>
-                            </div>
+                {roomsLoading ? (
+                  [0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="h-80 rounded-md bg-stone-800 animate-pulse"
+                      aria-hidden
+                    />
+                  ))
+                ) : roomsError ? (
+                  <p className="col-span-full text-stone-400 text-center py-8">
+                    Could not load rooms.{' '}
+                    <Link to="/rooms" className="text-gold-500 hover:underline">
+                      View accommodations
+                    </Link>
+                  </p>
+                ) : featuredRooms && featuredRooms.length > 0 ? (
+                  featuredRooms.map((room, i) => (
+                    <ScrollReveal key={room.id} delay={i * 100}>
+                      <Link
+                        to="/rooms"
+                        className="group relative overflow-hidden rounded-md h-80 block"
+                      >
+                        <img
+                          src={room.image_url}
+                          alt={room.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-90" />
+                        <div className="absolute bottom-6 left-6 right-6">
+                          <span className="text-gold-400 text-sm font-bold uppercase tracking-wider">
+                            {room.title}
+                          </span>
+                          <h3 className="text-xl font-bold mt-1 group-hover:text-gold-200 transition-colors">
+                            From ETB {Number(room.price_per_night).toLocaleString()}{' '}
+                            <span className="text-sm font-normal text-stone-300">/ night</span>
+                          </h3>
                         </div>
+                      </Link>
                     </ScrollReveal>
-                ))}
+                  ))
+                ) : (
+                  <p className="col-span-full text-stone-400 text-center py-8">
+                    No rooms listed yet.{' '}
+                    <Link to="/rooms" className="text-gold-500 hover:underline">
+                      Check back soon
+                    </Link>
+                  </p>
+                )}
             </div>
         </div>
       </section>

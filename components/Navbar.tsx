@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Hotel } from 'lucide-react';
-import { NAVIGATION, HOTEL_NAME } from '../constants';
+import { NAVIGATION, HOTEL_NAME_SHORT } from '../constants';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
             <NavLink to="/" className="flex items-center gap-2">
                 <Hotel className={`h-8 w-8 ${isScrolled ? 'text-gold-600' : 'text-white'}`} />
                 <span className={`font-serif text-2xl font-bold tracking-wider ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
-                {HOTEL_NAME}
+                {HOTEL_NAME_SHORT}
                 </span>
             </NavLink>
           </div>

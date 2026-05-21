@@ -1,6 +1,8 @@
 import React from 'react';
-import { Phone, MapPin, Mail, Facebook, Instagram, Twitter } from 'lucide-react';
-import { HOTEL_NAME, ADDRESS, PHONE } from '../constants';
+import { Phone, MapPin, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { HOTEL_NAME, ADDRESS, PHONE, PHONE_TEL, EMAIL_DISPLAY, EMAIL_MAILTO } from '../constants';
+import SocialLinks from './SocialLinks';
 
 const Footer: React.FC = () => {
   return (
@@ -15,10 +17,9 @@ const Footer: React.FC = () => {
               Experience the heart of Bole with luxury accommodation, 
               exquisite dining, and world-class service.
             </p>
-            <div className="flex space-x-4 pt-4">
-                <a href="#" className="hover:text-gold-500 transition-colors"><Facebook size={20}/></a>
-                <a href="#" className="hover:text-gold-500 transition-colors"><Instagram size={20}/></a>
-                <a href="#" className="hover:text-gold-500 transition-colors"><Twitter size={20}/></a>
+            <div className="pt-4">
+              <p className="text-xs uppercase tracking-widest text-stone-500 mb-3">Follow us</p>
+              <SocialLinks iconClassName="text-stone-400 hover:text-gold-500 transition-colors" />
             </div>
           </div>
 
@@ -26,16 +27,20 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-serif text-white font-semibold uppercase tracking-widest">Contact Us</h4>
             <div className="flex items-start space-x-3">
-              <MapPin className="w-5 h-5 text-gold-500 mt-1" />
+              <MapPin className="w-5 h-5 text-gold-500 mt-1 shrink-0" />
               <span>{ADDRESS}</span>
             </div>
             <div className="flex items-center space-x-3">
-              <Phone className="w-5 h-5 text-gold-500" />
-              <span>{PHONE}</span>
+              <Phone className="w-5 h-5 text-gold-500 shrink-0" />
+              <a href={PHONE_TEL} className="hover:text-gold-500 transition-colors">
+                {PHONE}
+              </a>
             </div>
             <div className="flex items-center space-x-3">
-              <Mail className="w-5 h-5 text-gold-500" />
-              <span>reservations@omedadhotel.com</span>
+              <Mail className="w-5 h-5 text-gold-500 shrink-0" />
+              <a href={EMAIL_MAILTO} className="hover:text-gold-500 transition-colors break-all">
+                {EMAIL_DISPLAY}
+              </a>
             </div>
           </div>
 
@@ -47,6 +52,7 @@ const Footer: React.FC = () => {
                 <li><a href="#" className="hover:text-gold-500 transition-colors">Terms & Conditions</a></li>
                 <li><a href="#" className="hover:text-gold-500 transition-colors">Privacy Policy</a></li>
                 <li><a href="#" className="hover:text-gold-500 transition-colors">Careers</a></li>
+                <li><Link to="/admin" className="hover:text-gold-500 transition-colors opacity-50">Staff Login</Link></li>
             </ul>
           </div>
 
